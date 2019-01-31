@@ -1,8 +1,8 @@
 from datetime import date
 import re
 from dateutil.relativedelta import relativedelta
-from edtf_exceptions import ParseError
-from edtf_date import EDTFDate, PRECISION_DAY, PRECISION_MONTH, \
+from .edtf_exceptions import ParseError
+from .edtf_date import EDTFDate, PRECISION_DAY, PRECISION_MONTH, \
     PRECISION_SEASON, PRECISION_YEAR, PRECISION_DECADE, PRECISION_CENTURY, \
     PRECISION_MILLENIUM
 
@@ -37,7 +37,10 @@ class EDTFInterval(object):
         return EDTFDate(part)
 
     def __unicode__(self):
-        return u"%s/%s" % (self.start, self.end)
+        return "%s/%s" % (self.start, self.end)
+
+    def __str__(self):
+        return "%s/%s" % (self.start, self.end)
 
     @staticmethod
     def _get_unknown_offset(precision):

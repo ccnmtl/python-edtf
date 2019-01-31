@@ -1,8 +1,8 @@
 from datetime import datetime, date
 from dateutil.parser import parse
 import re
-from edtf_date import EDTFDate
-from edtf_interval import EDTFInterval
+from .edtf_date import EDTFDate
+from .edtf_interval import EDTFInterval
 
 
 class EDTF(object):
@@ -23,7 +23,10 @@ class EDTF(object):
             self.date_obj = EDTFDate(text)
 
     def __unicode__(self):
-        return unicode(self.date_obj)
+        return str(self.date_obj)
+
+    def __str__(self):
+        return str(self.date_obj)
 
     def sort_date_earliest(self):
         return self.date_obj.sort_date_earliest()
@@ -115,9 +118,8 @@ class EDTF(object):
         is_after = is_after or re.findall(r'\blater\b', t)
 
         if is_before:
-            result = u"unknown/%s" % result
+            result = "unknown/%s" % result
         elif is_after:
-            result = u"%s/unknown" % result
+            result = "%s/unknown" % result
 
         return cls(result)
-

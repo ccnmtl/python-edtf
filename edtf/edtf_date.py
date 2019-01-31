@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil.parser import parse
 import re
 import calendar
-from edtf_exceptions import ParseError
+from .edtf_exceptions import ParseError
 
 PRECISION_MILLENIUM = "millenium"
 PRECISION_CENTURY = "century"
@@ -22,7 +22,7 @@ SEASONS = {
     23: "autumn",
     24: "winter",
 }
-INV_SEASONS = {v: k for k, v in SEASONS.items()}
+INV_SEASONS = {v: k for k, v in list(SEASONS.items())}
 INV_SEASONS['fall'] = 23
 SEASON_MONTHS_RANGE = {
     21: [3, 5],
@@ -37,7 +37,7 @@ SEASON_MONTHS_RANGE = {
 
 # two dates where every digit of an ISO date representation is different,
 # and one is in the past and one is in the future
-DEFAULT_DATE_1 = datetime(1234, 01, 01, 0, 0)
+DEFAULT_DATE_1 = datetime(1234, 0o1, 0o1, 0, 0)
 DEFAULT_DATE_2 = datetime(5678, 10, 10, 0, 0)
 
 DAY_FIRST = False  # Americans!
@@ -172,7 +172,7 @@ class EDTFDate(object):
             try:
                 i = int(val)
                 assert i > 0
-                assert i <= 12 or i in SEASONS.keys()
+                assert i <= 12 or i in list(SEASONS.keys())
                 self._month = i
             except:
                 self._month = None
@@ -224,13 +224,13 @@ class EDTFDate(object):
         precision = self.precision
 
         if precision == PRECISION_DAY:
-            result = u"{}-{}-{}".format(
+            result = "{}-{}-{}".format(
                 self.year,
                 self.month_string,
                 self.day_string,
             )
         elif precision in [PRECISION_MONTH, PRECISION_SEASON]:
-            result = u"{}-{}".format(
+            result = "{}-{}".format(
                 self.year,
                 self.month_string,
             )
@@ -240,6 +240,16 @@ class EDTFDate(object):
         return result
 
     def __unicode__(self):
+        result = self.isoish_string()
+
+        if self.is_uncertain:
+            result += "?"
+        if self.is_approximate:
+            result += "~"
+
+        return result
+
+    def __str__(self):
         result = self.isoish_string()
 
         if self.is_uncertain:
@@ -379,7 +389,7 @@ class EDTFDate(object):
                         self._precise_year(lean), self._month_of_season(lean)
                     )
 
-        isoish = u"%(year)s-%(month)02d-%(day)02d" % parts
+        isoish = "%(year)s-%(month)02d-%(day)02d" % parts
 
         _min = date.min.isoformat()  # parser ignores the '-' sign in the year
         if isoish < _min:
@@ -507,7 +517,7 @@ class EDTFDate(object):
             mentions_month = re.findall(r'\bmonth\b.+(in|during)\b', t)
             mentions_day = re.findall(r'\bday\b.+(in|during)\b', t)
 
-            for i in xrange(len(date1)):
+            for i in range(len(date1)):
                 # if the given year could be a century (e.g. '1800s') then use
                 # approximate/uncertain markers to decide whether we treat it as
                 # a century or a decade.
@@ -530,7 +540,7 @@ class EDTFDate(object):
 
             # strip off unknown chars from end of string - except the first 4
 
-            for i in reversed(xrange(len(result))):
+            for i in reversed(range(len(result))):
                 if result[i] not in ('u', 'x', '-'):
                     smallest_length = 4
 

@@ -1,3 +1,9 @@
+0.9.4 (2024-08-27)
+=====================
+
+* Release new version 0.9.4 - newer versions of pip don't allow
+  letters in the version number.
+
 0.9.3ctl (2019-07-09)
 =====================
 
